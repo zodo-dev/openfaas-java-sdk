@@ -18,7 +18,7 @@
         <lombok.version>1.18.6</lombok.version>
         <slf4j.version>1.7.30</slf4j.version>
         <!-- Sonar -->
-        <sonar.projectKey>zodo.dev:${project.artifactId}</sonar.projectKey>
+        <sonar.projectKey>zodo-dev:${project.artifactId}</sonar.projectKey>
         <sonar.projectName>${project.artifactId}</sonar.projectName>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

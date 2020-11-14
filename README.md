@@ -1,9 +1,9 @@
 Openfaas Java SDK
 ==========
-[![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/tecsinapse/tecsinapse-data-io/blob/master/LICENCE)
+[![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/zodo-dev/openfaas-java-sdk/blob/master/LICENCE)
 ![Auto build CI](https://github.com/zodo-dev/openfaas-java-sdk/workflows/Auto%20build%20CI/badge.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=br.com.tecsinapse%3Aopenfaas-java-sdk&metric=alert_status)](https://sonarcloud.io/dashboard?id=br.com.tecsinapse%3Atecsinapse-data-io)
-[![Coverage Status](https://img.shields.io/coveralls/zodo-dev/openfaas-java-sdk.svg?branch=develop)](https://coveralls.io/github/zodo-dev/openfaas-java-sdk?branch=develop)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zodo-dev%3Aopenfaas-java-sdk&metric=alert_status)](https://sonarcloud.io/dashboard?id=zodo-dev%3Aopenfaas-java-sdk)
+[![Coverage Status](https://coveralls.io/repos/github/zodo-dev/openfaas-java-sdk/badge.svg?branch=develop)](https://coveralls.io/github/zodo-dev/openfaas-java-sdk?branch=develop)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/)
 [![Javadoc](http://www.javadoc.io/badge/dev.zodo/openfaas-java-sdk.svg)](http://www.javadoc.io/doc/dev.zodo/openfaas-java-sdk)
 Wants to contribute to openfaas-java-sdk?
