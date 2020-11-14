@@ -6,6 +6,7 @@ Openfaas Java SDK
 [![Coverage Status](https://coveralls.io/repos/github/zodo-dev/openfaas-java-sdk/badge.svg?branch=develop)](https://coveralls.io/github/zodo-dev/openfaas-java-sdk?branch=develop)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/)
 [![Javadoc](http://www.javadoc.io/badge/dev.zodo/openfaas-java-sdk.svg)](http://www.javadoc.io/doc/dev.zodo/openfaas-java-sdk)
+
 Wants to contribute to openfaas-java-sdk?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
