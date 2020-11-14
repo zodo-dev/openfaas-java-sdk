@@ -65,8 +65,7 @@ public final class OpenfaasApi {
     public <T, O> SyncResponse<T> callFunction(SyncRequest<O> syncRequest) {
         Response response = newClient().build().callFunction(syncRequest.getFunctionName(), syncRequest.getBody());
         if (response.getStatus() == Status.OK.getStatusCode()) {
-            return response.readEntity(new GenericType<>() {
-            });
+            return response.readEntity(new GenericType<SyncResponse<T>>() {});
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
             throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, syncRequest.getFunctionName()));

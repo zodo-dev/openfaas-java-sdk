@@ -20,7 +20,7 @@ public class SyncResponse<T> {
         SyncResponse<C> asyncResponse = new SyncResponse<>();
         asyncResponse.durationSeconds = Util.doubleFromString(res.getHeaderString("X-Duration-Seconds"));
         try {
-            asyncResponse.body = res.readEntity(new GenericType<>(){});
+            asyncResponse.body = res.readEntity(new GenericType<C>(){});
         } catch (Exception ex) {
             log.warn("Error on parse body request.", ex);
         }

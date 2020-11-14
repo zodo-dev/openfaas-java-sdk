@@ -30,7 +30,7 @@ public class AsyncResponse<T> {
         asyncResponse.durationSeconds = getHeaderFromResponse(res, "X-Duration-Seconds", Util::doubleFromString);
         asyncResponse.startTime = getHeaderFromResponse(res, "X-Function-Status", Util::instantFromStringTimestamp);
         try {
-            asyncResponse.body = res.readEntity(new GenericType<>(){});
+            asyncResponse.body = res.readEntity(new GenericType<C>(){});
         } catch (Exception ex) {
             log.warn("Error on parse body request.", ex);
         }
