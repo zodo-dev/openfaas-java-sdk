@@ -2,33 +2,53 @@ package dev.zodo.openfaas.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 class OpenfaasApiTest {
 
-    @ParameterizedTest
-    @MethodSource("newOpenfaasApi")
-    void systemInfoTest(OpenfaasApi openfaasApi) {
-        Assertions.assertEquals("faas-netes", openfaasApi.systemInfo().getProvider().getProvider());
+    @Test
+    void systemInfoTest() {
+        Assertions.assertEquals("faas-netes", OpenfaasApi.getInstance().systemInfo().getProvider().getProvider());
     }
 
-    @ParameterizedTest
-    @MethodSource("newOpenfaasApi")
-    void healthzTest(OpenfaasApi openfaasApi) {
-        Assertions.assertTrue(openfaasApi.healthz());
+    @Test
+    void healthzTest() {
+        Assertions.assertTrue(OpenfaasApi.getInstance().healthz());
     }
 
-    @ParameterizedTest
-    @MethodSource("newOpenfaasApi")
-    void listFunctionsTest(OpenfaasApi openfaasApi) {
-        Assertions.assertTrue(openfaasApi.listFunctions().isEmpty());
+    @Test
+    void listFunctionsTest() {
+        Assertions.assertTrue(OpenfaasApi.getInstance().listFunctions().isEmpty());
     }
 
-    private static Stream<OpenfaasApi> newOpenfaasApi() {
-        return Stream.of(new OpenfaasApi());
+    @Test
+    void callFunctionTest() {
+        SyncRequest<String> req = new SyncRequest<>("figlet", "{\"ok\": 1}", Collections.emptyMap());
+        final SyncResponse<String> res = OpenfaasApi.getInstance().callFunction(req, String.class);
+        Assertions.assertEquals("   ___ _      _    _ _     ___   \n" +
+                "  / ( | )___ | | _( | )_  / \\ \\  \n" +
+                " | | V V/ _ \\| |/ /V V(_) | || | \n" +
+                "< <    | (_) |   <     _  | | > >\n" +
+                " | |    \\___/|_|\\_\\   (_) |_|| | \n" +
+                "  \\_\\                       /_/  \n", res.getBody());
     }
+
+    @Test
+    void callFunctionFutureTest() {
+        SyncRequest<String> req = new SyncRequest<>("figlet", "{\"ok\": 1}", Collections.emptyMap());
+        final CompletableFuture<SyncResponse<String>> future = OpenfaasApi.getInstance().callFunctionFuture(req, String.class);
+        future.thenAccept(res -> {
+            Assertions.assertEquals("   ___ _      _    _ _     ___   \n" +
+                    "  / ( | )___ | | _( | )_  / \\ \\  \n" +
+                    " | | V V/ _ \\| |/ /V V(_) | || | \n" +
+                    "< <    | (_) |   <     _  | | > >\n" +
+                    " | |    \\___/|_|\\_\\   (_) |_|| | \n" +
+                    "  \\_\\                       /_/  \n", res.getBody());
+        });
+    }
+
 }

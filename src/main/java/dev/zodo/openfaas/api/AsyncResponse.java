@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.function.Function;
@@ -22,7 +21,7 @@ public class AsyncResponse<T> {
     private Long functionStatus;
     private T body;
 
-    public static final <C> AsyncResponse<C> fromResponse(Response res) {
+    public static final <C> AsyncResponse<C> fromResponse(Response res, Class<C> tClass) {
         AsyncResponse<C> asyncResponse = new AsyncResponse<>();
         asyncResponse.callId = getHeaderFromResponse(res, "X-Call-Id", Function.identity());
         asyncResponse.functionName = getHeaderFromResponse(res, "X-Function-Name", Function.identity());
@@ -30,7 +29,7 @@ public class AsyncResponse<T> {
         asyncResponse.durationSeconds = getHeaderFromResponse(res, "X-Duration-Seconds", Util::doubleFromString);
         asyncResponse.startTime = getHeaderFromResponse(res, "X-Function-Status", Util::instantFromStringTimestamp);
         try {
-            asyncResponse.body = res.readEntity(new GenericType<C>(){});
+            asyncResponse.body = res.readEntity(tClass);
         } catch (Exception ex) {
             log.warn("Error on parse body request.", ex);
         }

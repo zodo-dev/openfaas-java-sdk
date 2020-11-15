@@ -5,9 +5,10 @@ import dev.zodo.openfaas.api.exceptions.OFUnexpectedException;
 import dev.zodo.openfaas.api.model.FunctionInfo;
 import dev.zodo.openfaas.api.model.Info;
 import dev.zodo.openfaas.config.Bundles;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
@@ -17,7 +18,12 @@ import static dev.zodo.openfaas.config.OpenfaasSdkProperties.OPENFAAS_PROPS;
 import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class OpenfaasApi {
+
+    public static OpenfaasApi getInstance() {
+        return new OpenfaasApi();
+    }
 
     private ApiClientBuilder<ApiInterface> newClient() {
         return newClient(false);
@@ -62,10 +68,10 @@ public final class OpenfaasApi {
         throw new OFUnexpectedException();
     }
 
-    public <T, O> SyncResponse<T> callFunction(SyncRequest<O> syncRequest) {
+    public <R, T> SyncResponse<R> callFunction(SyncRequest<T> syncRequest, Class<R> returnType) {
         Response response = newClient().build().callFunction(syncRequest.getFunctionName(), syncRequest.getBody());
         if (response.getStatus() == Status.OK.getStatusCode()) {
-            return response.readEntity(new GenericType<SyncResponse<T>>() {});
+            return SyncResponse.fromResponse(response, returnType);
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
             throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, syncRequest.getFunctionName()));
@@ -73,10 +79,10 @@ public final class OpenfaasApi {
         throw new OFUnexpectedException();
     }
 
-    public <T, O> CompletableFuture<SyncResponse<T>> callFunctionFuture(SyncRequest<O> syncRequest) {
-        CompletableFuture<SyncResponse<T>> future = new CompletableFuture<>();
+    public <R, T> CompletableFuture<SyncResponse<R>> callFunctionFuture(SyncRequest<T> syncRequest, Class<R> returnType) {
+        CompletableFuture<SyncResponse<R>> future = new CompletableFuture<>();
         try {
-            final SyncResponse<T> result = callFunction(syncRequest);
+            final SyncResponse<R> result = callFunction(syncRequest, returnType);
             future.complete(result);
         } catch (Exception e) {
             future.completeExceptionally(e);
@@ -84,10 +90,10 @@ public final class OpenfaasApi {
         return future;
     }
 
-    public <T, O> AsyncResponse<T> callAsyncFunction(AsyncRequest<O> asyncRequest) {
+    public <R, T> AsyncResponse<R> callAsyncFunction(AsyncRequest<T> asyncRequest, Class<R> returnType) {
         Response response = newClient().build().callAsyncFunction(asyncRequest.getFunctionName(), asyncRequest.getBody());
         if (response.getStatus() == Status.ACCEPTED.getStatusCode()) {
-            return AsyncResponse.fromResponse(response);
+            return AsyncResponse.fromResponse(response, returnType);
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
             throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, asyncRequest));
