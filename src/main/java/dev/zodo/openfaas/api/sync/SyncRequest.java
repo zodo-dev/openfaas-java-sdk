@@ -1,4 +1,4 @@
-package dev.zodo.openfaas.api;
+package dev.zodo.openfaas.api.sync;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +15,8 @@ import java.util.Map;
 public class SyncRequest<T> {
     private String functionName;
     private T body;
-    private Map<String, String> headers;
+    private final Map<String, String> headers = new HashMap<>();
     public void addHeader(String name, String value) {
-        if (headers == null) {
-            headers = new HashMap<>();
-        }
         headers.put(name, value);
     }
 }

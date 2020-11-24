@@ -17,4 +17,7 @@ public interface OpenfaasSdkProperties extends Config {
 
     @Key("openfaas.password")
     String password();
+
+    @Key("openfaas.callback.async.endpoint.prefix")
+    String openfaasCallbackAsyncEndpointPrefix();
 }

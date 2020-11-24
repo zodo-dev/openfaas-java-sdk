@@ -1,9 +1,13 @@
 package dev.zodo.openfaas.api;
 
+import dev.zodo.openfaas.api.async.AsyncRequest;
+import dev.zodo.openfaas.api.async.AsyncResponse;
 import dev.zodo.openfaas.api.exceptions.OFNotFoundException;
 import dev.zodo.openfaas.api.exceptions.OFUnexpectedException;
 import dev.zodo.openfaas.api.model.FunctionInfo;
 import dev.zodo.openfaas.api.model.Info;
+import dev.zodo.openfaas.api.sync.SyncRequest;
+import dev.zodo.openfaas.api.sync.SyncResponse;
 import dev.zodo.openfaas.config.Bundles;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -69,7 +73,10 @@ public final class OpenfaasApi {
     }
 
     public <R, T> SyncResponse<R> callFunction(SyncRequest<T> syncRequest, Class<R> returnType) {
-        Response response = newClient().build().callFunction(syncRequest.getFunctionName(), syncRequest.getBody());
+        Response response = newClient()
+                .addHeaders(syncRequest.getHeaders())
+                .build()
+                .callFunction(syncRequest.getFunctionName(), syncRequest.getBody());
         if (response.getStatus() == Status.OK.getStatusCode()) {
             return SyncResponse.fromResponse(response, returnType);
         }
@@ -91,7 +98,10 @@ public final class OpenfaasApi {
     }
 
     public <R, T> AsyncResponse<R> callAsyncFunction(AsyncRequest<T> asyncRequest, Class<R> returnType) {
-        Response response = newClient().build().callAsyncFunction(asyncRequest.getFunctionName(), asyncRequest.getBody());
+        Response response = newClient()
+                .addHeaders(asyncRequest.getHeaders())
+                .build()
+                .callAsyncFunction(asyncRequest.getFunctionName(), asyncRequest.getBody());
         if (response.getStatus() == Status.ACCEPTED.getStatusCode()) {
             return AsyncResponse.fromResponse(response, returnType);
         }

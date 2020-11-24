@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
-import java.util.function.Function;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static dev.zodo.openfaas.util.Constants.PARSER_VALUE_ERROR;
 
@@ -15,48 +17,52 @@ import static dev.zodo.openfaas.util.Constants.PARSER_VALUE_ERROR;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Util {
 
-    public static Function<Response, String> headerAsString(String key) {
-        return response -> response.getHeaderString(key);
-    }
-
-    public static Function<Response, Double> headerAsDouble(String key) {
-        return response -> {
-            String value = response.getHeaderString(key);
-            try {
-                return Double.parseDouble(value);
-            } catch (Exception ex) {
-                log.warn(Bundles.getString(PARSER_VALUE_ERROR, value, Double.class.getName()), ex);
-                return null;
-            }
-        };
-    }
-
-    public static Double doubleFromString(String str) {
+    public static BigDecimal bigDecimalFromString(String str) {
+        if (isNullOrEmpty(str)) {
+            return null;
+        }
         try {
-            return Double.parseDouble(str);
+            return BigDecimal.valueOf(Double.parseDouble(str));
         } catch (Exception ex) {
-            log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, Double.class.getName()), ex);
+            log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, BigDecimal.class.getName()), ex);
             return null;
         }
     }
 
     public static Long longFromString(String str) {
+        if (isNullOrEmpty(str)) {
+            return null;
+        }
         try {
-            return Long.parseLong(str);
+            return isNullOrEmpty(str) ? null : Long.parseLong(str);
         } catch (Exception ex) {
-            log.warn(Bundles.getString("parser.value.error", str, Double.class.getName()), ex);
+            log.warn(Bundles.getString("parser.value.error", str, Long.class.getName()), ex);
             return null;
         }
     }
-    public static Instant instantFromStringTimestamp(String str) {
+
+    public static LocalDateTime localDateTimeFromStringTimestamp(String str) {
         try {
             Long time = longFromString(str);
             if (time == null) {
                 throw new IllegalArgumentException("No time to converter");
             }
-            return Instant.ofEpochMilli(time);
+            return Instant.ofEpochSecond(time / 999999999).atZone(ZoneId.systemDefault()).toLocalDateTime();
         } catch (Exception ex) {
-            log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, Double.class.getName()), ex);
+            log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, LocalDateTime.class.getName()), ex);
+            return null;
+        }
+    }
+
+    public static Duration durationFromStringTimestamp(String str) {
+        try {
+            BigDecimal seconds = bigDecimalFromString(str);
+            if (seconds == null) {
+                return null;
+            }
+            return Duration.ofMillis(seconds.multiply(BigDecimal.valueOf(1_000_000)).longValue());
+        } catch (Exception ex) {
+            log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, Duration.class.getName()), ex);
             return null;
         }
     }

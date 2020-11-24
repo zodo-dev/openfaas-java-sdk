@@ -4,6 +4,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,12 @@ public final class ApiClientBuilder<T> {
     }
 
     public T build() {
+        if (!headers.isEmpty()) {
+            ClientRequestFilter requestFilter = clientReqContext -> this.headers.forEach(clientReqContext.getHeaders()::add);
+            target.register(requestFilter);
+        }
         ResteasyWebTarget rtarget = (ResteasyWebTarget) target;
+
         return rtarget.proxy(clazz);
     }
 

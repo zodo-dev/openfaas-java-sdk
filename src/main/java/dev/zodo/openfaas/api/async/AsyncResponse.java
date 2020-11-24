@@ -1,4 +1,4 @@
-package dev.zodo.openfaas.api;
+package dev.zodo.openfaas.api.async;
 
 import dev.zodo.openfaas.util.Util;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.core.Response;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 @Slf4j
@@ -15,21 +15,19 @@ import java.util.function.Function;
 public class AsyncResponse<T> {
 
     private String callId;
-    private String functionName;
-    private Instant startTime;
-    private Double durationSeconds;
-    private Long functionStatus;
+    private LocalDateTime startTime;
+    private Integer statusCode;
     private T body;
 
-    public static final <C> AsyncResponse<C> fromResponse(Response res, Class<C> tClass) {
+    public static <C> AsyncResponse<C> fromResponse(Response res, Class<C> tClass) {
         AsyncResponse<C> asyncResponse = new AsyncResponse<>();
         asyncResponse.callId = getHeaderFromResponse(res, "X-Call-Id", Function.identity());
-        asyncResponse.functionName = getHeaderFromResponse(res, "X-Function-Name", Function.identity());
-        asyncResponse.functionStatus = getHeaderFromResponse(res, "X-Function-Status", Util::longFromString);
-        asyncResponse.durationSeconds = getHeaderFromResponse(res, "X-Duration-Seconds", Util::doubleFromString);
-        asyncResponse.startTime = getHeaderFromResponse(res, "X-Function-Status", Util::instantFromStringTimestamp);
+        asyncResponse.startTime = getHeaderFromResponse(res, "X-Start-Time", Util::localDateTimeFromStringTimestamp);
         try {
-            asyncResponse.body = res.readEntity(tClass);
+            asyncResponse.statusCode = res.getStatus();
+            if (res.hasEntity()) {
+                asyncResponse.body = res.readEntity(tClass);
+            }
         } catch (Exception ex) {
             log.warn("Error on parse body request.", ex);
         }
