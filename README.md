@@ -14,6 +14,15 @@ Flow
 ---
 ![Flow](https://zodo-dev.github.io/openfaas-java-sdk/images/openfaas-java-sdk-flow.png)
 
+Openfaas Links?
+---
+Website: https://www.openfaas.com/
+
+Docs: https://docs.openfaas.com/
+
+Github: https://github.com/openfaas
+
+
 Wants to contribute to openfaas-java-sdk?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
