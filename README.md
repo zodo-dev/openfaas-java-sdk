@@ -7,6 +7,13 @@ Openfaas Java SDK
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.zodo/openfaas-java-sdk/)
 [![Javadoc](http://www.javadoc.io/badge/dev.zodo/openfaas-java-sdk.svg)](http://www.javadoc.io/doc/dev.zodo/openfaas-java-sdk)
 
+---
+Java implementation to call Openfaas functions
+
+Flow
+---
+![Flow](https://zodo-dev.github.io/openfaas-java-sdk/images/openfaas-java-sdk-flow.png)
+
 Wants to contribute to openfaas-java-sdk?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
