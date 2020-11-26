@@ -16,7 +16,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="openfaas-java-sdk-gh-social-template.svg">
+   sodipodi:docname="openfaas-java-sdk-gh-social-template.svg"
+   inkscape:export-filename="/home/edimar/Projetos/zodo/openfaas-java-sdk/docs/images/openfaas-java-sdk-gh-social-template.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <defs
      id="defs2">
     <marker
@@ -68,10 +71,10 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.81024936"
-     inkscape:cx="656.92923"
+     inkscape:zoom="0.98984375"
+     inkscape:cx="640"
      inkscape:cy="301.24949"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
