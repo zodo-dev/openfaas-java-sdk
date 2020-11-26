@@ -75,7 +75,6 @@
             <groupId>org.aeonbits.owner</groupId>
             <artifactId>owner</artifactId>
             <version>1.0.12</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
