@@ -12,7 +12,7 @@ public interface ApiInterface {
     @GET
     @Path("/healthz")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response.Status healthz();
+    Response healthz();
 
     @GET
     @Path("/system/info")

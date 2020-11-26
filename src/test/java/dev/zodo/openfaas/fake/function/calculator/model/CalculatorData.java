@@ -1,19 +1,18 @@
-package dev.zodo.openfaas.api.model;
-
+package dev.zodo.openfaas.fake.function.calculator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Info {
-    private ProviderInfo provider;
-    private Version version;
-    private String arch;
+public class CalculatorData {
+    private Operator operator;
+    private Double value1;
+    private Double value2;
 }

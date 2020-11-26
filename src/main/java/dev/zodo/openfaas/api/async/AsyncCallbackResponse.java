@@ -17,7 +17,7 @@ public class AsyncCallbackResponse<T> {
     private String callId;
     private String functionName;
     private Duration durationSeconds;
-    private Long functionStatus;
+    private Integer functionStatus;
     private T body;
 
     private static <T> T getHeaderFromHttpHeaders(HttpHeaders httpHeaders, String key, Function<String, T> convert) {
@@ -28,7 +28,7 @@ public class AsyncCallbackResponse<T> {
         AsyncCallbackResponse<C> asyncResponse = new AsyncCallbackResponse<>();
         asyncResponse.callId = getHeaderFromHttpHeaders(httpHeaders, "X-Call-Id", Function.identity());
         asyncResponse.durationSeconds = getHeaderFromHttpHeaders(httpHeaders, "X-Duration-Seconds", Util::durationFromStringTimestamp);
-        asyncResponse.functionStatus = getHeaderFromHttpHeaders(httpHeaders, "X-Function-Status", Util::longFromString);
+        asyncResponse.functionStatus = getHeaderFromHttpHeaders(httpHeaders, "X-Function-Status", Util::integerFromString);
         asyncResponse.functionName = getHeaderFromHttpHeaders(httpHeaders, "X-Function-Name", Function.identity());
         try {
             asyncResponse.body = obj;

@@ -29,6 +29,18 @@ public final class Util {
         }
     }
 
+    public static Integer integerFromString(String str) {
+        if (isNullOrEmpty(str)) {
+            return null;
+        }
+        try {
+            return isNullOrEmpty(str) ? null : Integer.parseInt(str);
+        } catch (Exception ex) {
+            log.warn(Bundles.getString("parser.value.error", str, Long.class.getName()), ex);
+            return null;
+        }
+    }
+
     public static Long longFromString(String str) {
         if (isNullOrEmpty(str)) {
             return null;

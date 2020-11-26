@@ -12,22 +12,18 @@ import java.util.function.Function;
 @Slf4j
 @Getter
 @NoArgsConstructor
-public class AsyncResponse<T> {
+public class AsyncResponse {
 
     private String callId;
     private LocalDateTime startTime;
     private Integer statusCode;
-    private T body;
 
-    public static <C> AsyncResponse<C> fromResponse(Response res, Class<C> tClass) {
-        AsyncResponse<C> asyncResponse = new AsyncResponse<>();
+    public static AsyncResponse fromResponse(Response res) {
+        AsyncResponse asyncResponse = new AsyncResponse();
         asyncResponse.callId = getHeaderFromResponse(res, "X-Call-Id", Function.identity());
         asyncResponse.startTime = getHeaderFromResponse(res, "X-Start-Time", Util::localDateTimeFromStringTimestamp);
         try {
             asyncResponse.statusCode = res.getStatus();
-            if (res.hasEntity()) {
-                asyncResponse.body = res.readEntity(tClass);
-            }
         } catch (Exception ex) {
             log.warn("Error on parse body request.", ex);
         }
