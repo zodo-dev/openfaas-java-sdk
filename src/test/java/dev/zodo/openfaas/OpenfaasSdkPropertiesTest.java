@@ -11,7 +11,7 @@ class OpenfaasSdkPropertiesTest {
     void checkDefaultValueTest() {
         assertEquals("http://127.0.0.1:31112", OPENFAAS_PROPS.url());
         assertEquals("admin", OPENFAAS_PROPS.username());
-        assertEquals("openfaas", OPENFAAS_PROPS.password());
+        assertEquals("admin", OPENFAAS_PROPS.password());
     }
 
 }

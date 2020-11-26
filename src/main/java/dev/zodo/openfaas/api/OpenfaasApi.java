@@ -9,9 +9,8 @@ import dev.zodo.openfaas.api.model.Info;
 import dev.zodo.openfaas.api.sync.SyncRequest;
 import dev.zodo.openfaas.api.sync.SyncResponse;
 import dev.zodo.openfaas.config.Bundles;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,11 +21,23 @@ import static dev.zodo.openfaas.config.OpenfaasSdkProperties.OPENFAAS_PROPS;
 import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class OpenfaasApi {
+    private final String url;
+    private final String username;
+    private final String password;
+
+    private OpenfaasApi(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
+    public static OpenfaasApi getInstance(String url, String username, String password) {
+        return new OpenfaasApi(url, username, password);
+    }
 
     public static OpenfaasApi getInstance() {
-        return new OpenfaasApi();
+        return getInstance(OPENFAAS_PROPS.url(), OPENFAAS_PROPS.username(), OPENFAAS_PROPS.password());
     }
 
     private ApiClientBuilder<ApiInterface> newClient() {
@@ -34,16 +45,16 @@ public final class OpenfaasApi {
     }
 
     private ApiClientBuilder<ApiInterface> newClient(boolean requireAuth) {
-        final ApiClientBuilder<ApiInterface> clientBuilder = ApiClientBuilder.newBuilder(ApiInterface.class, OPENFAAS_PROPS.url());
+        final ApiClientBuilder<ApiInterface> clientBuilder = ApiClientBuilder.newBuilder(ApiInterface.class, url);
         if (requireAuth) {
-            return clientBuilder.authBasic(OPENFAAS_PROPS.username(), OPENFAAS_PROPS.password());
+            return clientBuilder.authBasic(username, password);
         }
         return clientBuilder;
     }
 
     public boolean healthz() {
-        final Status status = newClient().build().healthz();
-        return status == Status.OK;
+        final Response response = newClient().build().healthz();
+        return response.getStatus() == HttpStatus.SC_OK;
     }
 
     public Info systemInfo() {
@@ -97,13 +108,13 @@ public final class OpenfaasApi {
         return future;
     }
 
-    public <R, T> AsyncResponse<R> callAsyncFunction(AsyncRequest<T> asyncRequest, Class<R> returnType) {
+    public <T> AsyncResponse callAsyncFunction(AsyncRequest<T> asyncRequest) {
         Response response = newClient()
                 .addHeaders(asyncRequest.getHeaders())
                 .build()
                 .callAsyncFunction(asyncRequest.getFunctionName(), asyncRequest.getBody());
         if (response.getStatus() == Status.ACCEPTED.getStatusCode()) {
-            return AsyncResponse.fromResponse(response, returnType);
+            return AsyncResponse.fromResponse(response);
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
             throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, asyncRequest));
