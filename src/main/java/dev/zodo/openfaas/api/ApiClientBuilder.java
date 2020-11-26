@@ -6,6 +6,7 @@ import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public final class ApiClientBuilder<T> {
     private final WebTarget target;
     private final Map<String, String> headers = new HashMap<>();
 
-    private ApiClientBuilder(Class<T> clazz, String url) {
+    private ApiClientBuilder(Class<T> clazz, URI url) {
         this.clazz = clazz;
         target = ClientBuilder.newClient().target(url);
     }
@@ -47,7 +48,7 @@ public final class ApiClientBuilder<T> {
         return rtarget.proxy(clazz);
     }
 
-    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, String url) {
-        return new ApiClientBuilder<>(clazz, url);
+    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, URI uri) {
+        return new ApiClientBuilder<>(clazz, uri);
     }
 }

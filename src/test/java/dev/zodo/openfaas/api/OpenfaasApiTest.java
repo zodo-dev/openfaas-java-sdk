@@ -22,6 +22,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -47,7 +48,7 @@ class OpenfaasApiTest {
     private String password;
 
     private OpenfaasApi openfaasApi() {
-        return OpenfaasApi.getInstance(String.format("http://localhost:%d/", this.port), username, password);
+        return OpenfaasApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password);
     }
 
     @Test
