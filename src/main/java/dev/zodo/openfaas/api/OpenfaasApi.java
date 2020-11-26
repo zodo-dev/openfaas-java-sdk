@@ -14,6 +14,7 @@ import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,18 +22,18 @@ import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 
 @Slf4j
 public final class OpenfaasApi {
-    private final String url;
+    private final URI uri;
     private final String username;
     private final String password;
 
-    private OpenfaasApi(String url, String username, String password) {
-        this.url = url;
+    private OpenfaasApi(URI uri, String username, String password) {
+        this.uri = uri;
         this.username = username;
         this.password = password;
     }
 
-    public static OpenfaasApi getInstance(String url, String username, String password) {
-        return new OpenfaasApi(url, username, password);
+    public static OpenfaasApi getInstance(URI uri, String username, String password) {
+        return new OpenfaasApi(uri, username, password);
     }
 
     private ApiClientBuilder<ApiInterface> newClient() {
@@ -40,7 +41,7 @@ public final class OpenfaasApi {
     }
 
     private ApiClientBuilder<ApiInterface> newClient(boolean requireAuth) {
-        final ApiClientBuilder<ApiInterface> clientBuilder = ApiClientBuilder.newBuilder(ApiInterface.class, url);
+        final ApiClientBuilder<ApiInterface> clientBuilder = ApiClientBuilder.newBuilder(ApiInterface.class, uri);
         if (requireAuth) {
             return clientBuilder.authBasic(username, password);
         }
