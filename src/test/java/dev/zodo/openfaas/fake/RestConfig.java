@@ -10,7 +10,7 @@ public class RestConfig extends ResourceConfig {
     public RestConfig() {
         register(FakeOpenfassApiResource.class);
         register(CallbackWebhookResource.class);
-        register(RestConfig.class);
+        register(NotFoundException.class);
     }
 
 }

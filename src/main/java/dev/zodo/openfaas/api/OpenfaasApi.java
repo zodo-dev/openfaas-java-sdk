@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response.Status;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static dev.zodo.openfaas.config.OpenfaasSdkProperties.OPENFAAS_PROPS;
 import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 
 @Slf4j
@@ -34,10 +33,6 @@ public final class OpenfaasApi {
 
     public static OpenfaasApi getInstance(String url, String username, String password) {
         return new OpenfaasApi(url, username, password);
-    }
-
-    public static OpenfaasApi getInstance() {
-        return getInstance(OPENFAAS_PROPS.url(), OPENFAAS_PROPS.username(), OPENFAAS_PROPS.password());
     }
 
     private ApiClientBuilder<ApiInterface> newClient() {
@@ -117,7 +112,7 @@ public final class OpenfaasApi {
             return AsyncResponse.fromResponse(response);
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
-            throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, asyncRequest));
+            throw new OFNotFoundException(Bundles.getString(NOT_FOUND_MSG, asyncRequest.getFunctionName()));
         }
         throw new OFUnexpectedException();
     }

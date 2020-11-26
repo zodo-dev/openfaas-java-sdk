@@ -3,6 +3,7 @@ package dev.zodo.openfaas.fake;
 import dev.zodo.openfaas.fake.function.calculator.Calculator;
 import dev.zodo.openfaas.fake.function.calculator.model.CalculatorData;
 import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class CallbackAsyncService {
 
     @Async
     public void sendAsyncCallback(String functionName, CalculatorData calculatorData, String callId, String callbackEndpoint) {
+        if (Util.isNullOrEmpty(callbackEndpoint)) {
+            return;
+        }
         ResultData result = ResultData.from(calculatorData, Calculator.calculate(calculatorData));
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("X-Call-Id", callId);
