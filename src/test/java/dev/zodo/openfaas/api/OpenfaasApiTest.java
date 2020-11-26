@@ -85,7 +85,8 @@ class OpenfaasApiTest {
     void callFunction404Test() {
         CalculatorData calculatorData = sum10Plus20();
         SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME_404, calculatorData);
-        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> openfaasApi().callFunction(req, ResultData.class));
+        OpenfaasApi api = openfaasApi();
+        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> api.callFunction(req, ResultData.class));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
@@ -151,7 +152,8 @@ class OpenfaasApiTest {
         CalculatorData calculatorData = mul10Plus20();
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
         AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME_404, callbackEndpoint, calculatorData);
-        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> openfaasApi().callAsyncFunction(req));
+        OpenfaasApi api = openfaasApi();
+        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> api.callAsyncFunction(req));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
