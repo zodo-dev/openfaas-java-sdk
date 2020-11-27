@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ApiClientBuilder<T> {
+final class ApiClientBuilder<T> {
     private final Class<T> clazz;
     private final WebTarget target;
     private final Map<String, String> headers = new HashMap<>();

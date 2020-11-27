@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
-class OpenfaasApiTest {
+class ApiTest {
 
     private static final String TEST_CALL_ID = "callid_test";
     private static final String TEST_FUNCTION_NAME = "calculator";
@@ -48,12 +48,16 @@ class OpenfaasApiTest {
     private String password;
 
     private OpenfaasApi openfaasApi() {
-        return OpenfaasApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password);
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port));
+    }
+
+    private OpenfaasAdminApi openfaasAdminApi() {
+        return OpenfaasAdminApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password);
     }
 
     @Test
-    void systemInfoTest() {
-        Assertions.assertEquals("faas-test", openfaasApi().systemInfo().getProvider().getProvider());
+    void adminApiSystemInfoTest() {
+        Assertions.assertEquals("faas-test", openfaasAdminApi().systemInfo().getProvider().getProvider());
     }
 
     @Test
@@ -62,8 +66,8 @@ class OpenfaasApiTest {
     }
 
     @Test
-    void listFunctionsTest() {
-        final List<FunctionInfo> functionInfos = openfaasApi().listFunctions();
+    void adminApiListFunctionsTest() {
+        final List<FunctionInfo> functionInfos = openfaasAdminApi().listFunctions();
         Assertions.assertEquals(1, functionInfos.size());
         Assertions.assertEquals("calculator", functionInfos.get(0).getName());
     }
