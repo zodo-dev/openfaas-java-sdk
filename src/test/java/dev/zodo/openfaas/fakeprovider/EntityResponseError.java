@@ -1,4 +1,4 @@
-package dev.zodo.openfaas.fake;
+package dev.zodo.openfaas.fakeprovider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

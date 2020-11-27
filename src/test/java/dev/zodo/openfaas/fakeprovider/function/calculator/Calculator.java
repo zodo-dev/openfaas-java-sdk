@@ -1,6 +1,6 @@
-package dev.zodo.openfaas.fake.function.calculator;
+package dev.zodo.openfaas.fakeprovider.function.calculator;
 
-import dev.zodo.openfaas.fake.function.calculator.model.CalculatorData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
 
 public final class Calculator {
     private Calculator() {

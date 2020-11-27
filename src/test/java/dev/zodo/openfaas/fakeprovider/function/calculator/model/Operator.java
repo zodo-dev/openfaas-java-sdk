@@ -1,4 +1,4 @@
-package dev.zodo.openfaas.fake.function.calculator.model;
+package dev.zodo.openfaas.fakeprovider.function.calculator.model;
 
 public enum Operator {
     SUM() {

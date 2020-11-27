@@ -1,7 +1,7 @@
-package dev.zodo.openfaas.fake.callback;
+package dev.zodo.openfaas.api.callback;
 
 import dev.zodo.openfaas.api.async.AsyncCallbackResponse;
-import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 import dev.zodo.openfaas.webhook.OpenfaasCallbackEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

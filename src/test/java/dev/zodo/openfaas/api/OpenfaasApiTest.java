@@ -3,14 +3,14 @@ package dev.zodo.openfaas.api;
 import dev.zodo.openfaas.api.async.AsyncCallbackResponse;
 import dev.zodo.openfaas.api.async.AsyncRequest;
 import dev.zodo.openfaas.api.async.AsyncResponse;
-import dev.zodo.openfaas.api.exceptions.OFNotFoundException;
+import dev.zodo.openfaas.exceptions.OpenfaasSdkNotFoundException;
 import dev.zodo.openfaas.api.model.FunctionInfo;
 import dev.zodo.openfaas.api.sync.SyncRequest;
 import dev.zodo.openfaas.api.sync.SyncResponse;
-import dev.zodo.openfaas.fake.callback.OpenfaasCallbackListener;
-import dev.zodo.openfaas.fake.function.calculator.model.CalculatorData;
-import dev.zodo.openfaas.fake.function.calculator.model.Operator;
-import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.api.callback.OpenfaasCallbackListener;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.Operator;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -86,7 +86,7 @@ class OpenfaasApiTest {
         CalculatorData calculatorData = sum10Plus20();
         SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME_404, calculatorData);
         OpenfaasApi api = openfaasApi();
-        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> api.callFunction(req, ResultData.class));
+        Exception e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callFunction(req, ResultData.class));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
@@ -153,7 +153,7 @@ class OpenfaasApiTest {
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
         AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME_404, callbackEndpoint, calculatorData);
         OpenfaasApi api = openfaasApi();
-        Exception e = Assertions.assertThrows(OFNotFoundException.class, () -> api.callAsyncFunction(req));
+        Exception e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callAsyncFunction(req));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 

@@ -7,8 +7,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
 @SpringBootApplication
-public class FakeOpenfassProviderApplication extends SpringBootServletInitializer {
+public class FakeProviderApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
-        SpringApplication.run(FakeOpenfassProviderApplication.class, args);
+        SpringApplication.run(FakeProviderApplication.class, args);
     }
 }
