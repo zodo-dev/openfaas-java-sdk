@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 class UtilTest {
 
@@ -38,7 +39,7 @@ class UtilTest {
         Assertions.assertNull(Util.localDateTimeFromStringTimestamp(""));
         Assertions.assertNull(Util.localDateTimeFromStringTimestamp("10.1"));
         Assertions.assertNull(Util.localDateTimeFromStringTimestamp("AB"));
-        LocalDateTime date = LocalDateTime.parse("2020-11-20T12:45:12").withNano(0);
+        LocalDateTime date = OffsetDateTime.parse("2020-11-20T12:45:12-03:00").toLocalDateTime().withNano(0);
         LocalDateTime dateFromStr = Util.localDateTimeFromStringTimestamp("1605887110394112888");
         Assertions.assertNotNull(dateFromStr);
         Assertions.assertEquals(0, date.compareTo(dateFromStr));
