@@ -22,6 +22,8 @@ Docs: https://docs.openfaas.com/
 
 Github: https://github.com/openfaas
 
+WARN: Under development. There is still no first release.
+---
 
 Wants to contribute to openfaas-java-sdk?
 ---
