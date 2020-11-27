@@ -13,27 +13,33 @@ import org.apache.http.HttpStatus;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 
 @Slf4j
 public final class OpenfaasApi extends BaseApi<ApiInterface> {
 
-    private OpenfaasApi(URI uri, String username, String password) {
-        super(uri, username, password, ApiInterface.class);
+    private OpenfaasApi(URI uri, Supplier<Map<String, String>> customHeaderSupplier) {
+        super(uri, customHeaderSupplier, ApiInterface.class);
     }
 
     public static OpenfaasApi getInstance(String uri) {
-        return getInstance(URI.create(uri), null, null);
+        return getInstance(URI.create(uri), null);
     }
 
     public static OpenfaasApi getInstance(URI uri) {
-        return getInstance(uri, null, null);
+        return getInstance(uri, null);
     }
 
-    public static OpenfaasApi getInstance(URI uri, String username, String password) {
-        return new OpenfaasApi(uri, username, password);
+    public static OpenfaasApi getInstance(String uri, Supplier<Map<String, String>> customHeaderSupplier) {
+        return getInstance(URI.create(uri), customHeaderSupplier);
+    }
+
+    public static OpenfaasApi getInstance(URI uri, Supplier<Map<String, String>> customHeaderSupplier) {
+        return new OpenfaasApi(uri, customHeaderSupplier);
     }
 
     public boolean healthz() {

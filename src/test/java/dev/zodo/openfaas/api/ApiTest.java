@@ -23,10 +23,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Slf4j
 @ActiveProfiles("test")
@@ -49,6 +52,15 @@ class ApiTest {
 
     private OpenfaasApi openfaasApi() {
         return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port));
+    }
+
+    private OpenfaasApi openfaasApiWithCustomHeader() {
+        Supplier<Map<String, String>> headerSupplier = () -> {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization:", "Bearer any_auth_token");
+            return headers;
+        };
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), headerSupplier);
     }
 
     private OpenfaasAdminApi openfaasAdminApi() {
@@ -117,7 +129,7 @@ class ApiTest {
         OpenfaasCallbackListener.asyncResponseReceived = null;
         AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME, callbackEndpoint, calculatorData);
 
-        AsyncResponse asyncResult = openfaasApi().callAsyncFunction(req);
+        AsyncResponse asyncResult = openfaasApiWithCustomHeader().callAsyncFunction(req);
         Assertions.assertEquals(HttpStatus.ACCEPTED.value(), asyncResult.getStatusCode());
         Assertions.assertEquals(TEST_CALL_ID, asyncResult.getCallId());
 

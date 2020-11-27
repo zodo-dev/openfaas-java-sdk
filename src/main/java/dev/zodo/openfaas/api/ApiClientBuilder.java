@@ -9,19 +9,27 @@ import javax.ws.rs.client.WebTarget;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 final class ApiClientBuilder<T> {
     private final Class<T> clazz;
     private final WebTarget target;
     private final Map<String, String> headers = new HashMap<>();
+    private Supplier<Map<String, String>> customHeaderSupplier;
 
     private ApiClientBuilder(Class<T> clazz, URI url) {
         this.clazz = clazz;
         target = ClientBuilder.newClient().target(url);
     }
 
-    public ApiClientBuilder<T> authBasic(String username, String password) {
+    public ApiClientBuilder<T> withAuthBasic(String username, String password) {
         target.register(new BasicAuthentication(username, password));
+        return this;
+    }
+
+    public ApiClientBuilder<T> withCustomHeaderSupplier(Supplier<Map<String, String>> oauthHeaderSupplier) {
+        this.customHeaderSupplier = oauthHeaderSupplier;
         return this;
     }
 
@@ -41,6 +49,13 @@ final class ApiClientBuilder<T> {
     public T build() {
         if (!headers.isEmpty()) {
             ClientRequestFilter requestFilter = clientReqContext -> this.headers.forEach(clientReqContext.getHeaders()::add);
+            target.register(requestFilter);
+        }
+        Map<String, String> oauthHeaders = Optional.ofNullable(customHeaderSupplier)
+                .map(Supplier::get)
+                .orElse(null);
+        if (oauthHeaders != null && !oauthHeaders.isEmpty()) {
+            ClientRequestFilter requestFilter = clientReqContext -> oauthHeaders.forEach(clientReqContext.getHeaders()::add);
             target.register(requestFilter);
         }
         ResteasyWebTarget rtarget = (ResteasyWebTarget) target;
