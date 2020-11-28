@@ -97,21 +97,32 @@ class ApiTest {
 
     @Test
     void callFunctionTest() {
-        CalculatorData calculatorData = sum10Plus20();
-        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME, calculatorData);
+        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME, sum10Plus20());
         SyncResponse<ResultData> res = openfaasApi().callFunction(req, ResultData.class);
         Assertions.assertEquals(HttpStatus.OK.value(), res.getStatusCode());
-        ResultData result = res.getBody();
-        Assertions.assertEquals(Operator.SUM, result.getOperator());
-        Assertions.assertEquals(10d, result.getValue1());
-        Assertions.assertEquals(20d, result.getValue2());
-        Assertions.assertEquals(30d, result.getResult());
+        checkSumResult(res.getBody());
+    }
+
+    @Test
+    void callFunctionUsingRemoteInterfaceTest() throws ExecutionException, InterruptedException {
+        CalculatorRemoteFunction calculatorRemoteFunction = new CalculatorRemoteFunction(String.format("http://localhost:%d", this.port));
+
+        SyncResponse<ResultData> res = calculatorRemoteFunction.call(sum10Plus20());
+        Assertions.assertEquals(HttpStatus.OK.value(), res.getStatusCode());
+        checkSumResult(res.getBody());
+
+        CompletableFuture<SyncResponse<ResultData>> future = calculatorRemoteFunction.callFuture(mul10Plus20());
+        Object o = CompletableFuture.anyOf(future).get();
+        Assertions.assertNotNull(o);
+        res = (SyncResponse<ResultData>) o;
+        Assertions.assertEquals(HttpStatus.OK.value(), res.getStatusCode());
+        checkMultiplyResult(res.getBody());
+
     }
 
     @Test
     void callFunction404Test() {
-        CalculatorData calculatorData = sum10Plus20();
-        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME_404, calculatorData);
+        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME_404, sum10Plus20());
         OpenfaasApi api = openfaasApi();
         OpenfaasSdkNotFoundException e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callFunction(req, ResultData.class));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
@@ -119,26 +130,20 @@ class ApiTest {
 
     @Test
     void callFunctionFutureTest() throws ExecutionException, InterruptedException {
-        CalculatorData calculatorData = mul10Plus20();
-        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME, calculatorData);
+        SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME, mul10Plus20());
         CompletableFuture<SyncResponse<ResultData>> future = openfaasApi().callFunctionFuture(req, ResultData.class);
         Object o = CompletableFuture.anyOf(future).get();
         Assertions.assertNotNull(o);
         SyncResponse<ResultData> res = (SyncResponse<ResultData>) o;
         Assertions.assertEquals(HttpStatus.OK.value(), res.getStatusCode());
-        ResultData result = res.getBody();
-        Assertions.assertEquals(Operator.MULTIPLY, result.getOperator());
-        Assertions.assertEquals(10d, result.getValue1());
-        Assertions.assertEquals(20d, result.getValue2());
-        Assertions.assertEquals(200d, result.getResult());
+        checkMultiplyResult(res.getBody());
     }
 
     @Test
     void z_callAsyncFunctionTest() throws InterruptedException {
-        CalculatorData calculatorData = mul10Plus20();
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
         OpenfaasCallbackListener.asyncResponseReceived = null;
-        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME, callbackEndpoint, calculatorData);
+        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME, callbackEndpoint, mul10Plus20());
 
         AsyncResponse asyncResult = openfaasApiWithCustomHeader().callAsyncFunction(req);
         Assertions.assertEquals(HttpStatus.ACCEPTED.value(), asyncResult.getStatusCode());
@@ -151,19 +156,34 @@ class ApiTest {
         Assertions.assertEquals(TEST_FUNCTION_NAME, res.getFunctionName());
         Assertions.assertEquals(TEST_CALL_ID, res.getCallId());
         Assertions.assertEquals(HttpStatus.OK.value(), res.getFunctionStatus());
+        checkMultiplyResult(res.getBody());
+    }
 
-        ResultData result = res.getBody();
-        Assertions.assertEquals(Operator.MULTIPLY, result.getOperator());
-        Assertions.assertEquals(10d, result.getValue1());
-        Assertions.assertEquals(20d, result.getValue2());
-        Assertions.assertEquals(200d, result.getResult());
+    @Test
+    void z_callAsyncFunctionRemoteInterfaceTest() throws InterruptedException {
+        String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
+        OpenfaasCallbackListener.asyncResponseReceived = null;
+        CalculatorRemoteFunction calculatorRemoteFunction = new CalculatorRemoteFunction(String.format("http://localhost:%d", this.port));
+        calculatorRemoteFunction.setCallbackEndpoint(callbackEndpoint);
+        AsyncResponse asyncResult = calculatorRemoteFunction.asyncCall(mul10Plus20());
+
+        Assertions.assertEquals(HttpStatus.ACCEPTED.value(), asyncResult.getStatusCode());
+        Assertions.assertEquals(TEST_CALL_ID, asyncResult.getCallId());
+
+        // Wait for response in webhook
+        TimeUnit.SECONDS.sleep(2);
+        Assertions.assertNotNull(OpenfaasCallbackListener.asyncResponseReceived);
+        AsyncCallbackResponse<ResultData> res = OpenfaasCallbackListener.asyncResponseReceived;
+        Assertions.assertEquals(TEST_FUNCTION_NAME, res.getFunctionName());
+        Assertions.assertEquals(TEST_CALL_ID, res.getCallId());
+        Assertions.assertEquals(HttpStatus.OK.value(), res.getFunctionStatus());
+        checkMultiplyResult(res.getBody());
     }
 
     @Test
     void z_callAsyncFunctionNoCallbackTest() throws InterruptedException {
-        CalculatorData calculatorData = mul10Plus20();
         OpenfaasCallbackListener.asyncResponseReceived = null;
-        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME, null, calculatorData);
+        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME, null, mul10Plus20());
 
         AsyncResponse asyncResult = openfaasApi().callAsyncFunction(req);
         Assertions.assertEquals(HttpStatus.ACCEPTED.value(), asyncResult.getStatusCode());
@@ -176,14 +196,12 @@ class ApiTest {
 
     @Test
     void z_callAsyncFunction404Test() {
-        CalculatorData calculatorData = mul10Plus20();
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
-        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME_404, callbackEndpoint, calculatorData);
+        AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME_404, callbackEndpoint, mul10Plus20());
         OpenfaasApi api = openfaasApi();
         OpenfaasSdkNotFoundException e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callAsyncFunction(req));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
-
 
     private CalculatorData sum10Plus20() {
         return CalculatorData.builder()
@@ -199,6 +217,20 @@ class ApiTest {
                 .value1(10d)
                 .value2(20d)
                 .build();
+    }
+
+    private void checkSumResult(ResultData resultData) {
+        Assertions.assertEquals(Operator.SUM, resultData.getOperator());
+        Assertions.assertEquals(10d, resultData.getValue1());
+        Assertions.assertEquals(20d, resultData.getValue2());
+        Assertions.assertEquals(30d, resultData.getResult());
+    }
+
+    private void checkMultiplyResult(ResultData resultData) {
+        Assertions.assertEquals(Operator.MULTIPLY, resultData.getOperator());
+        Assertions.assertEquals(10d, resultData.getValue1());
+        Assertions.assertEquals(20d, resultData.getValue2());
+        Assertions.assertEquals(200d, resultData.getResult());
     }
 
     @BeforeAll
