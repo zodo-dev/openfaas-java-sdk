@@ -42,6 +42,13 @@
         </developerConnection>
         <tag>1.0.0-beta.1</tag>
     </scm>
+    <licenses>
+        <license>
+            <name>FSF Lesser GNU Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <issueManagement>
         <system>GitHub</system>
