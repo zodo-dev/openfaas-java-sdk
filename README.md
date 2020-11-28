@@ -45,14 +45,14 @@ Maven:
 <dependency>
   <groupId>dev.zodo</groupId>
   <artifactId>openfaas-java-sdk</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0-beta.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile "dev.zodo:openfaas-java-sdk:1.0.0-SNAPSHOT"
+compile "dev.zodo:openfaas-java-sdk:1.0.0-beta.1"
 ```
 
 If you want to use snapshots first config OSS Sonatype Snapshots repository:
@@ -102,10 +102,6 @@ Documentation and samples
 ---
 
 For documentation and samples check out our [wiki](https://github.com/zodo-dev/openfaas-java-sdk/wiki)
-
-Getting Started
----
-Go to [Getting Started](https://zodo-dev.github.io/openfaas-java-sdk/getting-started.html)  to usage example.
 
 Need help or found an issue?
 ---
