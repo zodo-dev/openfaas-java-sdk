@@ -4,7 +4,7 @@ After added dependency in project, get next steps
 
 ## Simple usage
 
-## extend abstract class RemoteFunctionImp or implement interface RemoteFunction
+### Using interface RemoteFunction
 
 ```java
 public class CalculatorRemoteFunction extends RemoteFunctionImp<CalculatorData, ResultData> {
@@ -15,9 +15,10 @@ public class CalculatorRemoteFunction extends RemoteFunctionImp<CalculatorData, 
 ```
 [CalculatorRemoteFunction.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/main/src/test/java/dev/zodo/openfaas/api/CalculatorRemoteFunction.java)
 
+Extend abstract class RemoteFunctionImp or implement interface RemoteFunction
 The args `uri` and `callbackEndpoint` are optional and can be set before calling function.
 
-## Call sync function
+### Call sync function
 
 ```java
 SyncResponse<ResultData> res = calculatorRemoteFunction.call(objCalculatorData);
@@ -26,7 +27,7 @@ SyncResponse<ResultData> res = calculatorRemoteFunction.call(objCalculatorData);
 
 After execution, `res` object receive status of the remote execution as http status code `res.getStatusCode()`, execution time `res.getDurationSeconds` and the function result as ResultaData in `res.getBody()`.
 
-## Call sync function as java future
+### Call sync function as java future
 
 ```java
 CompletableFuture<SyncResponse<ResultData>> future = calculatorRemoteFunction.callFuture(objCalculatorData);
@@ -34,7 +35,7 @@ CompletableFuture<SyncResponse<ResultData>> future = calculatorRemoteFunction.ca
 
 Same as calling sync function, but return type is CompletableFuture<SyncResponse<ResultData>>
 
-## Call async function
+### Call async function
 
 ```java
 AsyncResponse asyncResult = calculatorRemoteFunction.asyncCall(objCalculatorData);
@@ -44,7 +45,7 @@ AsyncResponse asyncResult = calculatorRemoteFunction.asyncCall(objCalculatorData
 After execution, `res` object receive status of remote execution as http status code `res.getStatusCode()`, start time `res.getStartTime` and the function call id as string unique identification `res.getCallId()`.
 If callback endpoint url has provided, after execution the result has send to provided webhook in `callbackEndpoint`.
 
-## Callback webhook
+### Callback webhook
 
 ```java
 @Path("/api")
