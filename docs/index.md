@@ -1,5 +1,7 @@
 # Welcome to the openfaas-java-sdk wiki!
 
+[Flow](flow.md)
+
 After added dependency in project, get next steps  
 
 ## Simple usage
