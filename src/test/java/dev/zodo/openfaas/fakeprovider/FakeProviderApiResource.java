@@ -1,12 +1,12 @@
-package dev.zodo.openfaas.fake;
+package dev.zodo.openfaas.fakeprovider;
 
 import dev.zodo.openfaas.api.model.FunctionInfo;
 import dev.zodo.openfaas.api.model.Info;
 import dev.zodo.openfaas.api.model.ProviderInfo;
 import dev.zodo.openfaas.api.model.Version;
-import dev.zodo.openfaas.fake.function.calculator.Calculator;
-import dev.zodo.openfaas.fake.function.calculator.model.CalculatorData;
-import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.Calculator;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.Collections;
 
 @Path("/")
-public class FakeOpenfassApiResource {
+public class FakeProviderApiResource {
 
     private static final String TEST_FUNCTION = "calculator";
 
@@ -53,12 +53,15 @@ public class FakeOpenfassApiResource {
                 .build();
     }
 
-    @POST
+    @GET
     @Path("/system/function/{functionName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response infoFunction(@PathParam("functionName") String functionName) {
+        if (!TEST_FUNCTION.equals(functionName)) {
+            throw new NotFoundException(String.format("Function not found [{%s}]", functionName));
+        }
         return Response
-                .noContent()
+                .ok(FunctionInfo.builder().name(TEST_FUNCTION).build())
                 .build();
     }
 

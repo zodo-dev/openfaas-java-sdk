@@ -1,6 +1,6 @@
-package dev.zodo.openfaas.fake.callback;
+package dev.zodo.openfaas.api.callback;
 
-import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 import dev.zodo.openfaas.webhook.CallbackAsyncEndpoint;
 
 import javax.ws.rs.Path;

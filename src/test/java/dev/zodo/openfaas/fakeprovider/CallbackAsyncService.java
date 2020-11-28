@@ -1,8 +1,8 @@
-package dev.zodo.openfaas.fake;
+package dev.zodo.openfaas.fakeprovider;
 
-import dev.zodo.openfaas.fake.function.calculator.Calculator;
-import dev.zodo.openfaas.fake.function.calculator.model.CalculatorData;
-import dev.zodo.openfaas.fake.function.calculator.model.ResultData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.Calculator;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
+import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 import dev.zodo.openfaas.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

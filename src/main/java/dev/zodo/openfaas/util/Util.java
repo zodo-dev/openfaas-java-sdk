@@ -1,6 +1,6 @@
 package dev.zodo.openfaas.util;
 
-import dev.zodo.openfaas.config.Bundles;
+import dev.zodo.openfaas.i18n.Bundles;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +72,7 @@ public final class Util {
             if (seconds == null) {
                 return null;
             }
-            return Duration.ofMillis(seconds.multiply(BigDecimal.valueOf(1_000_000)).longValue());
+            return Duration.ofMillis(seconds.multiply(BigDecimal.valueOf(1_000)).longValue());
         } catch (Exception ex) {
             log.warn(Bundles.getString(PARSER_VALUE_ERROR, str, Duration.class.getName()), ex);
             return null;
