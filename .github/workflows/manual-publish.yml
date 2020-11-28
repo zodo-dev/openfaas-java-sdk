@@ -8,7 +8,7 @@ on:
     inputs:
       branch:
         description: 'Branch or tag'
-        default: 'develop'
+        default: 'main'
         required: true
 
 jobs:
