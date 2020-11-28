@@ -163,8 +163,7 @@ class ApiTest {
     void z_callAsyncFunctionRemoteInterfaceTest() throws InterruptedException {
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
         OpenfaasCallbackListener.asyncResponseReceived = null;
-        CalculatorRemoteFunction calculatorRemoteFunction = new CalculatorRemoteFunction(String.format("http://localhost:%d", this.port));
-        calculatorRemoteFunction.setCallbackEndpoint(callbackEndpoint);
+        CalculatorRemoteFunction calculatorRemoteFunction = new CalculatorRemoteFunction(String.format("http://localhost:%d", this.port), callbackEndpoint);
         AsyncResponse asyncResult = calculatorRemoteFunction.asyncCall(mul10Plus20());
 
         Assertions.assertEquals(HttpStatus.ACCEPTED.value(), asyncResult.getStatusCode());

@@ -20,15 +20,22 @@ public abstract class RemoteFunctionImp<T, R> implements RemoteFunction<T, R> {
     @Setter
     private String callbackEndpoint;
 
-    public RemoteFunctionImp(String name, Class<R> returnType) {
+    protected RemoteFunctionImp(String uri, String name, Class<R> returnType, String callbackEndpoint) {
         this.name = name;
         this.returnType = returnType;
+        this.uri = uri;
+        this.callbackEndpoint = callbackEndpoint;
     }
 
-    public RemoteFunctionImp(String uri, String name, Class<R> returnType) {
-        this(name, returnType);
-        this.uri = uri;
+    protected RemoteFunctionImp(String name, Class<R> returnType) {
+        this(null, name, returnType);
     }
+
+    protected RemoteFunctionImp(String uri, String name, Class<R> returnType) {
+        this(uri, name, returnType, null);
+    }
+
+
 
     public void addHeader(String name, String value) {
         headers.put(name, value);

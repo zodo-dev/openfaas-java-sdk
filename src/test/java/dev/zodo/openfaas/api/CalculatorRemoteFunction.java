@@ -7,4 +7,8 @@ public class CalculatorRemoteFunction extends RemoteFunctionImp<CalculatorData, 
     public CalculatorRemoteFunction(String uri) {
         super(uri, "calculator", ResultData.class);
     }
+
+    public CalculatorRemoteFunction(String uri, String callbackEndpoint) {
+        super(uri, "calculator", ResultData.class, callbackEndpoint);
+    }
 }
