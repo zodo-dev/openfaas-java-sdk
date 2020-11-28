@@ -75,3 +75,10 @@ public class OpenfaasCallbackListener implements OpenfaasCallbackEvent<ResultDat
 Implement interface OpenfaasCallbackEvent with expected receive data in webhook. This interface has provided by CDI (Spring in sample). On receive webhook event, received value well be passed to consume method. 
 
 [OpenfaasCallbackListener.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/callback/OpenfaasCallbackListener.java)
+
+### Samples
+
+Openfaas function: https://github.com/zodo-dev/openfaas-functions-samples
+
+Spring boot application: https://github.com/zodo-dev/openfaas-java-sdk-examples
+
