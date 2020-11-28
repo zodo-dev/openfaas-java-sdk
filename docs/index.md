@@ -13,7 +13,7 @@ public class CalculatorRemoteFunction extends RemoteFunctionImp<CalculatorData, 
     }
 }
 ```
-https://github.com/zodo-dev/openfaas-java-sdk/blob/main/src/test/java/dev/zodo/openfaas/api/CalculatorRemoteFunction.java
+[CalculatorRemoteFunction.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/main/src/test/java/dev/zodo/openfaas/api/CalculatorRemoteFunction.java)
 
 The args `uri` and `callbackEndpoint` are optional and can be set before calling function.
 
@@ -22,7 +22,7 @@ The args `uri` and `callbackEndpoint` are optional and can be set before calling
 ```java
 SyncResponse<ResultData> res = calculatorRemoteFunction.call(objCalculatorData);
 ```
-https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/ApiTest.java#L107
+[ApiTest.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/ApiTest.java#L107)
 
 After execution, `res` object receive status of the remote execution as http status code `res.getStatusCode()`, execution time `res.getDurationSeconds` and the function result as ResultaData in `res.getBody()`.
 
@@ -39,7 +39,7 @@ Same as calling sync function, but return type is CompletableFuture<SyncResponse
 ```java
 AsyncResponse asyncResult = calculatorRemoteFunction.asyncCall(objCalculatorData);
 ```
-https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/ApiTest.java#L163
+[ApiTest.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/ApiTest.java#L163)
 
 After execution, `res` object receive status of remote execution as http status code `res.getStatusCode()`, start time `res.getStartTime` and the function call id as string unique identification `res.getCallId()`.
 If callback endpoint url has provided, after execution the result has send to provided webhook in `callbackEndpoint`.
@@ -52,7 +52,7 @@ public class CallbackWebhookResource extends CallbackAsyncEndpoint<ResultData> {
 
 }
 ```
-https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/callback/CallbackWebhookResource.java
+[CallbackWebhookResource.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/callback/CallbackWebhookResource.java)
 
 Extend class CallbackAsyncEndpoint and configure root path with annotation `@Path`.
 
@@ -71,4 +71,4 @@ public class OpenfaasCallbackListener implements OpenfaasCallbackEvent<ResultDat
 ```
 Implement interface OpenfaasCallbackEvent with expected receive data in webhook. This interface has provided by CDI (Spring in sample). On receive webhook event, received value well be passed to consume method. 
 
-https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/callback/OpenfaasCallbackListener.java
+[OpenfaasCallbackListener.java](https://github.com/zodo-dev/openfaas-java-sdk/blob/38f77373fb6be339b349e654bacf0d14d4e86cbc/src/test/java/dev/zodo/openfaas/api/callback/OpenfaasCallbackListener.java)
