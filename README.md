@@ -10,6 +10,13 @@ Openfaas Java SDK
 ---
 Java implementation to call Openfaas functions
 
+Documentation
+---
+
+Doc: https://zodo-dev.github.io/openfaas-java-sdk/
+
+Wiki: (https://github.com/zodo-dev/openfaas-java-sdk/wiki)
+
 Flow
 ---
 ![Flow](https://zodo-dev.github.io/openfaas-java-sdk/images/openfaas-java-sdk-flow.png)
