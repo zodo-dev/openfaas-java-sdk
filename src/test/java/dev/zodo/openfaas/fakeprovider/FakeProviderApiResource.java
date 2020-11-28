@@ -53,12 +53,15 @@ public class FakeProviderApiResource {
                 .build();
     }
 
-    @POST
+    @GET
     @Path("/system/function/{functionName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response infoFunction(@PathParam("functionName") String functionName) {
+        if (!TEST_FUNCTION.equals(functionName)) {
+            throw new NotFoundException(String.format("Function not found [{%s}]", functionName));
+        }
         return Response
-                .noContent()
+                .ok(FunctionInfo.builder().name(TEST_FUNCTION).build())
                 .build();
     }
 

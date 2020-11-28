@@ -3,19 +3,16 @@ package dev.zodo.openfaas.api;
 import dev.zodo.openfaas.api.async.AsyncCallbackResponse;
 import dev.zodo.openfaas.api.async.AsyncRequest;
 import dev.zodo.openfaas.api.async.AsyncResponse;
-import dev.zodo.openfaas.exceptions.OpenfaasSdkNotFoundException;
+import dev.zodo.openfaas.api.callback.OpenfaasCallbackListener;
 import dev.zodo.openfaas.api.model.FunctionInfo;
 import dev.zodo.openfaas.api.sync.SyncRequest;
 import dev.zodo.openfaas.api.sync.SyncResponse;
-import dev.zodo.openfaas.api.callback.OpenfaasCallbackListener;
+import dev.zodo.openfaas.exceptions.OpenfaasSdkNotFoundException;
 import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
 import dev.zodo.openfaas.fakeprovider.function.calculator.model.Operator;
 import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -25,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -75,6 +73,7 @@ class ApiTest {
     @Test
     void healthzTest() {
         Assertions.assertTrue(openfaasApi().healthz());
+        Assertions.assertTrue(openfaasAdminApi().healthz());
     }
 
     @Test
@@ -82,6 +81,18 @@ class ApiTest {
         final List<FunctionInfo> functionInfos = openfaasAdminApi().listFunctions();
         Assertions.assertEquals(1, functionInfos.size());
         Assertions.assertEquals("calculator", functionInfos.get(0).getName());
+    }
+
+    @Test
+    void adminApiSystemInfoFunction() {
+        Assertions.assertEquals(TEST_FUNCTION_NAME, openfaasAdminApi().infoFunction(TEST_FUNCTION_NAME).getName());
+    }
+
+    @Test
+    void adminApiSystemInfoFunction404() {
+        OpenfaasAdminApi api = openfaasAdminApi();
+        OpenfaasSdkNotFoundException e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.infoFunction(TEST_FUNCTION_NAME_404));
+        Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
     @Test
@@ -102,7 +113,7 @@ class ApiTest {
         CalculatorData calculatorData = sum10Plus20();
         SyncRequest<CalculatorData> req = new SyncRequest<>(TEST_FUNCTION_NAME_404, calculatorData);
         OpenfaasApi api = openfaasApi();
-        Exception e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callFunction(req, ResultData.class));
+        OpenfaasSdkNotFoundException e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callFunction(req, ResultData.class));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
@@ -169,7 +180,7 @@ class ApiTest {
         String callbackEndpoint = String.format("http://localhost:%d/api/openfaas/async-callback", port);
         AsyncRequest<CalculatorData> req = new AsyncRequest<>(TEST_FUNCTION_NAME_404, callbackEndpoint, calculatorData);
         OpenfaasApi api = openfaasApi();
-        Exception e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callAsyncFunction(req));
+        OpenfaasSdkNotFoundException e = Assertions.assertThrows(OpenfaasSdkNotFoundException.class, () -> api.callAsyncFunction(req));
         Assertions.assertEquals("Function not found calculator_not_found", e.getMessage());
     }
 
@@ -188,6 +199,11 @@ class ApiTest {
                 .value1(10d)
                 .value2(20d)
                 .build();
+    }
+
+    @BeforeAll
+    static void runTestAsEnglishLocale() {
+        Locale.setDefault(Locale.ENGLISH);
     }
 
 }

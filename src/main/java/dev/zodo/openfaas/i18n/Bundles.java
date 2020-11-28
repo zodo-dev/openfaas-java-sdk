@@ -10,15 +10,11 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Bundles {
 
-    private static final ResourceBundle DEFAULT_BUNDLE;
-    private static final Map<String, ResourceBundle> BUNDLES_BY_LOCALE;
+    protected static ResourceBundle defaultBundle;
+    protected static Map<String, ResourceBundle> bundlesByLocale;
+    protected static Locale lcPtBr = new Locale("pt", "BR");
     static {
-        DEFAULT_BUNDLE = ResourceBundle.getBundle("messages");
-
-        BUNDLES_BY_LOCALE = new HashMap<>();
-        BUNDLES_BY_LOCALE.put("en", DEFAULT_BUNDLE);
-        BUNDLES_BY_LOCALE.put("en_US", DEFAULT_BUNDLE);
-        BUNDLES_BY_LOCALE.put("pt_BR", ResourceBundle.getBundle("messages_pt_BR"));
+        loadBundles(Bundles.class.getClassLoader());
     }
 
     public static String getString(String name, Locale locale) {
@@ -28,8 +24,10 @@ public final class Bundles {
             if (!Util.isNullOrEmpty(msg)) {
                 return msg;
             }
-            if (rbByLocale == DEFAULT_BUNDLE) {
-                msg = DEFAULT_BUNDLE.getString(name);
+            if (rbByLocale != defaultBundle) {
+                msg = defaultBundle.getString(name);
+            } else {
+                return name;
             }
             if (Util.isNullOrEmpty(msg)) {
                 return name;
@@ -42,9 +40,9 @@ public final class Bundles {
 
     private static ResourceBundle getBundleByLocale(Locale locale) {
         if (locale == null) {
-            return DEFAULT_BUNDLE;
+            return defaultBundle;
         }
-        return BUNDLES_BY_LOCALE.getOrDefault(locale.toString(), DEFAULT_BUNDLE);
+        return bundlesByLocale.getOrDefault(locale.toString(), defaultBundle);
     }
 
     public static String getString(String name) {
@@ -57,6 +55,14 @@ public final class Bundles {
 
     public static String getString(String name, Locale locale, Object... args) {
         return MessageFormat.format(getString(name, locale), args);
+    }
+
+    protected static void loadBundles(ClassLoader classLoader) {
+        defaultBundle = ResourceBundle.getBundle("messages", Locale.getDefault(), classLoader);
+        bundlesByLocale = new HashMap<>();
+        bundlesByLocale.put("en", defaultBundle);
+        bundlesByLocale.put("en_US", defaultBundle);
+        bundlesByLocale.put("pt_BR", ResourceBundle.getBundle("messages", lcPtBr));
     }
 
 }
