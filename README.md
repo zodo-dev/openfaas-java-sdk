@@ -15,7 +15,7 @@ Documentation
 
 Doc: https://zodo-dev.github.io/openfaas-java-sdk/
 
-Wiki: (https://github.com/zodo-dev/openfaas-java-sdk/wiki)
+Wiki: https://github.com/zodo-dev/openfaas-java-sdk/wiki
 
 Flow
 ---
