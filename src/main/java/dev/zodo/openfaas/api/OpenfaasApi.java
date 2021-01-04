@@ -8,7 +8,6 @@ import dev.zodo.openfaas.exceptions.OpenfaasSdkNotFoundException;
 import dev.zodo.openfaas.exceptions.OpenfaasSdkUnexpectedException;
 import dev.zodo.openfaas.i18n.Bundles;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -23,7 +22,7 @@ import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 public final class OpenfaasApi extends BaseApi<ApiInterface> {
 
     private OpenfaasApi(URI uri, Supplier<Map<String, String>> customHeaderSupplier) {
-        super(uri, customHeaderSupplier, ApiInterface.class);
+        super(uri, customHeaderSupplier, ApiInterfaceImpl::new);
     }
 
     public static OpenfaasApi getInstance(String uri) {
@@ -44,7 +43,7 @@ public final class OpenfaasApi extends BaseApi<ApiInterface> {
 
     public boolean healthz() {
         final Response response = newClient().build().healthz();
-        return response.getStatus() == HttpStatus.SC_OK;
+        return response.getStatus() == Status.OK.getStatusCode();
     }
 
     public <R, T> SyncResponse<R> callFunction(SyncRequest<T> syncRequest, Class<R> returnType) {

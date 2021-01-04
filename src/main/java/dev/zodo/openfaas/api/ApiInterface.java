@@ -4,8 +4,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public interface ApiInterface {
-
+public interface ApiInterface extends BaseApiInterface {
     @GET
     @Path("/healthz")
     @Consumes(MediaType.APPLICATION_JSON)

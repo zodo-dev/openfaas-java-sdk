@@ -1,30 +1,32 @@
 package dev.zodo.openfaas.api;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
-
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 final class ApiClientBuilder<T> {
-    private final Class<T> clazz;
     private final WebTarget target;
     private final Map<String, String> headers = new HashMap<>();
     private Supplier<Map<String, String>> customHeaderSupplier;
+    private Function<WebTarget, T> newInstanceBuilder;
 
-    private ApiClientBuilder(Class<T> clazz, URI url) {
-        this.clazz = clazz;
+    private ApiClientBuilder(URI url, Function<WebTarget, T> newInstanceBuilder) {
         target = ClientBuilder.newClient().target(url);
+        this.newInstanceBuilder = newInstanceBuilder;
     }
 
     public ApiClientBuilder<T> withAuthBasic(String username, String password) {
-        target.register(new BasicAuthentication(username, password));
+        String passwdEncoded = Base64.getEncoder()
+                .encodeToString(String.format("%s:%s", username, password).getBytes(StandardCharsets.UTF_8));
+        addHeader("Authorization", "Basic " + passwdEncoded);
         return this;
     }
 
@@ -58,12 +60,10 @@ final class ApiClientBuilder<T> {
             ClientRequestFilter requestFilter = clientReqContext -> oauthHeaders.forEach(clientReqContext.getHeaders()::add);
             target.register(requestFilter);
         }
-        ResteasyWebTarget rtarget = (ResteasyWebTarget) target;
-
-        return rtarget.proxy(clazz);
+        return newInstanceBuilder.apply(target);
     }
 
-    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, URI uri) {
-        return new ApiClientBuilder<>(clazz, uri);
+    public static <T> ApiClientBuilder<T> newBuilder(URI uri, Function<WebTarget, T> newInstanceBuilder) {
+        return new ApiClientBuilder<>(uri, newInstanceBuilder);
     }
 }

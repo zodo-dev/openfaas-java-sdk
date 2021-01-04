@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-public interface AdminApiInterface {
+public interface AdminApiInterface extends BaseApiInterface  {
 
     @GET
     @Path("/healthz")
