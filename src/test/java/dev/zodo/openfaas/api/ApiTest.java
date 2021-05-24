@@ -54,9 +54,8 @@ class ApiTest {
         Locale.setDefault(new Locale("en", "US"));
     }
 
-
     private OpenfaasApi openfaasApi() {
-        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port));
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), null);
     }
 
     private OpenfaasApi openfaasApiWithCustomHeader() {
@@ -65,11 +64,11 @@ class ApiTest {
             headers.put("Authorization", "Bearer any_auth_token");
             return headers;
         };
-        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), headerSupplier);
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), headerSupplier, null);
     }
 
     private OpenfaasAdminApi openfaasAdminApi() {
-        return OpenfaasAdminApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password);
+        return OpenfaasAdminApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password, null);
     }
 
     @Test

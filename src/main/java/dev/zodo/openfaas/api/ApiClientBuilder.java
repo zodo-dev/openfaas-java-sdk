@@ -1,5 +1,8 @@
 package dev.zodo.openfaas.api;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
@@ -9,18 +12,21 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 final class ApiClientBuilder<T> {
+    private final Class<T> clazz;
     private final WebTarget target;
     private final Map<String, String> headers = new HashMap<>();
     private Supplier<Map<String, String>> customHeaderSupplier;
-    private Function<WebTarget, T> newInstanceBuilder;
 
-    private ApiClientBuilder(URI url, Function<WebTarget, T> newInstanceBuilder) {
-        target = ClientBuilder.newClient().target(url);
-        this.newInstanceBuilder = newInstanceBuilder;
+    private ApiClientBuilder(Class<T> clazz, URI url, ResteasyClient client) {
+        this.clazz = clazz;
+        if (client == null) {
+            target = ClientBuilder.newClient().target(url);
+        } else {
+            target = client.target(url);
+        }
     }
 
     public ApiClientBuilder<T> withAuthBasic(String username, String password) {
@@ -60,10 +66,12 @@ final class ApiClientBuilder<T> {
             ClientRequestFilter requestFilter = clientReqContext -> oauthHeaders.forEach(clientReqContext.getHeaders()::add);
             target.register(requestFilter);
         }
-        return newInstanceBuilder.apply(target);
+        ResteasyWebTarget rtarget = (ResteasyWebTarget) target;
+
+        return rtarget.proxy(clazz);
     }
 
-    public static <T> ApiClientBuilder<T> newBuilder(URI uri, Function<WebTarget, T> newInstanceBuilder) {
-        return new ApiClientBuilder<>(uri, newInstanceBuilder);
+    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, URI uri, ResteasyClient client) {
+        return new ApiClientBuilder<>(clazz, uri, client);
     }
 }

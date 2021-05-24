@@ -2,6 +2,7 @@ package dev.zodo.openfaas.api;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,9 @@ public abstract class RemoteFunctionImp<T, R> implements RemoteFunction<T, R> {
     @Getter
     @Setter
     private String callbackEndpoint;
+    @Getter
+    @Setter
+    private ResteasyClient resteasyClient;
 
     protected RemoteFunctionImp(String uri, String name, Class<R> returnType, String callbackEndpoint) {
         this.name = name;
@@ -34,7 +38,6 @@ public abstract class RemoteFunctionImp<T, R> implements RemoteFunction<T, R> {
     protected RemoteFunctionImp(String uri, String name, Class<R> returnType) {
         this(uri, name, returnType, null);
     }
-
 
 
     public void addHeader(String name, String value) {
