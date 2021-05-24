@@ -39,8 +39,8 @@
 
     <scm>
         <url>https://github.com/zodo-dev/openfaas-java-sdk</url>
-        <connection>https://github.com/zodo-dev/openfaas-java-sdk.git</connection>
-        <developerConnection>https://github.com/zodo-dev/openfaas-java-sdk.git
+        <connection>scm:git:git@github.com:zodo-dev/openfaas-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:zodo-dev/openfaas-java-sdk.git
         </developerConnection>
         <tag>HEAD</tag>
     </scm>
