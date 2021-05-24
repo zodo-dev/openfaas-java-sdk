@@ -8,7 +8,7 @@ import dev.zodo.openfaas.exceptions.OpenfaasSdkNotFoundException;
 import dev.zodo.openfaas.exceptions.OpenfaasSdkUnexpectedException;
 import dev.zodo.openfaas.i18n.Bundles;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,29 +22,29 @@ import static dev.zodo.openfaas.util.Constants.NOT_FOUND_MSG;
 @Slf4j
 public final class OpenfaasApi extends BaseApi<ApiInterface> {
 
-    private OpenfaasApi(URI uri, Supplier<Map<String, String>> customHeaderSupplier) {
-        super(uri, customHeaderSupplier, ApiInterface.class);
+    private OpenfaasApi(URI uri, Supplier<Map<String, String>> customHeaderSupplier, ResteasyClient client) {
+        super(uri, customHeaderSupplier, ApiInterface.class, client);
     }
 
-    public static OpenfaasApi getInstance(String uri) {
-        return getInstance(URI.create(uri), null);
+    public static OpenfaasApi getInstance(String uri, ResteasyClient client) {
+        return getInstance(URI.create(uri), null, client);
     }
 
-    public static OpenfaasApi getInstance(URI uri) {
-        return getInstance(uri, null);
+    public static OpenfaasApi getInstance(URI uri, ResteasyClient client) {
+        return getInstance(uri, null, client);
     }
 
-    public static OpenfaasApi getInstance(String uri, Supplier<Map<String, String>> customHeaderSupplier) {
-        return getInstance(URI.create(uri), customHeaderSupplier);
+    public static OpenfaasApi getInstance(String uri, Supplier<Map<String, String>> customHeaderSupplier, ResteasyClient client) {
+        return getInstance(URI.create(uri), customHeaderSupplier, client);
     }
 
-    public static OpenfaasApi getInstance(URI uri, Supplier<Map<String, String>> customHeaderSupplier) {
-        return new OpenfaasApi(uri, customHeaderSupplier);
+    public static OpenfaasApi getInstance(URI uri, Supplier<Map<String, String>> customHeaderSupplier, ResteasyClient client) {
+        return new OpenfaasApi(uri, customHeaderSupplier, client);
     }
 
     public boolean healthz() {
         final Response response = newClient().build().healthz();
-        return response.getStatus() == HttpStatus.SC_OK;
+        return response.getStatus() == Status.OK.getStatusCode();
     }
 
     public <R, T> SyncResponse<R> callFunction(SyncRequest<T> syncRequest, Class<R> returnType) {
@@ -77,7 +77,7 @@ public final class OpenfaasApi extends BaseApi<ApiInterface> {
                 .addHeaders(asyncRequest.getHeaders())
                 .build()
                 .callAsyncFunction(asyncRequest.getFunctionName(), asyncRequest.getBody());
-        if (response.getStatus() == Status.ACCEPTED.getStatusCode()) {
+        if (response.getStatus() == Status.ACCEPTED.getStatusCode() || response.getStatus() == Status.OK.getStatusCode()) {
             return AsyncResponse.fromResponse(response);
         }
         if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {

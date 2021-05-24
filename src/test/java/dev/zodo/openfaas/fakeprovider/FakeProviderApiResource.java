@@ -7,6 +7,7 @@ import dev.zodo.openfaas.api.model.Version;
 import dev.zodo.openfaas.fakeprovider.function.calculator.Calculator;
 import dev.zodo.openfaas.fakeprovider.function.calculator.model.CalculatorData;
 import dev.zodo.openfaas.fakeprovider.function.calculator.model.ResultData;
+import dev.zodo.openfaas.i18n.Bundles;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -58,7 +59,7 @@ public class FakeProviderApiResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response infoFunction(@PathParam("functionName") String functionName) {
         if (!TEST_FUNCTION.equals(functionName)) {
-            throw new NotFoundException(String.format("Function not found [{%s}]", functionName));
+            throw new NotFoundException(Bundles.getString("not.found.function", functionName));
         }
         return Response
                 .ok(FunctionInfo.builder().name(TEST_FUNCTION).build())
@@ -81,7 +82,7 @@ public class FakeProviderApiResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response callFunction(@PathParam("functionName") String functionName, CalculatorData calculatorData) {
         if (!TEST_FUNCTION.equals(functionName)) {
-            throw new NotFoundException(String.format("Function not found [{%s}]", functionName));
+            throw new NotFoundException(Bundles.getString("not.found.function", functionName));
         }
         return Response.ok(ResultData.from(calculatorData, Calculator.calculate(calculatorData))).build();
     }
@@ -94,7 +95,7 @@ public class FakeProviderApiResource {
                                                @HeaderParam("X-Callback-Url") String callbackEndpoint,
                                                CalculatorData calculatorData) {
         if (!TEST_FUNCTION.equals(functionName)) {
-            throw new NotFoundException(String.format("Function not found [{%s}]", functionName));
+            throw new NotFoundException(Bundles.getString("not.found.function", functionName));
         }
         LocalDateTime now = LocalDateTime.now();
         String callId = "callid_test";

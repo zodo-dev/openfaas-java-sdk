@@ -4,6 +4,7 @@ import dev.zodo.openfaas.api.async.AsyncRequest;
 import dev.zodo.openfaas.api.async.AsyncResponse;
 import dev.zodo.openfaas.api.sync.SyncRequest;
 import dev.zodo.openfaas.api.sync.SyncResponse;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,8 @@ public interface RemoteFunction<T, R> {
     String getCallbackEndpoint();
 
     Class<R> getReturnType();
+
+    ResteasyClient getResteasyClient();
 
     default Map<String, String> getHeaders() {
         return new HashMap<>();
@@ -38,7 +41,7 @@ public interface RemoteFunction<T, R> {
     }
 
     default OpenfaasApi getOpenfaasApi() {
-        return OpenfaasApi.getInstance(getUri());
+        return OpenfaasApi.getInstance(getUri(), null, getResteasyClient());
     }
 
     default SyncResponse<R> call(T objData) {

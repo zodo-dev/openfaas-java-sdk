@@ -1,12 +1,14 @@
 package dev.zodo.openfaas.api;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.WebTarget;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,13 +20,19 @@ final class ApiClientBuilder<T> {
     private final Map<String, String> headers = new HashMap<>();
     private Supplier<Map<String, String>> customHeaderSupplier;
 
-    private ApiClientBuilder(Class<T> clazz, URI url) {
+    private ApiClientBuilder(Class<T> clazz, URI url, ResteasyClient client) {
         this.clazz = clazz;
-        target = ClientBuilder.newClient().target(url);
+        if (client == null) {
+            target = ClientBuilder.newClient().target(url);
+        } else {
+            target = client.target(url);
+        }
     }
 
     public ApiClientBuilder<T> withAuthBasic(String username, String password) {
-        target.register(new BasicAuthentication(username, password));
+        String passwdEncoded = Base64.getEncoder()
+                .encodeToString(String.format("%s:%s", username, password).getBytes(StandardCharsets.UTF_8));
+        addHeader("Authorization", "Basic " + passwdEncoded);
         return this;
     }
 
@@ -63,7 +71,7 @@ final class ApiClientBuilder<T> {
         return rtarget.proxy(clazz);
     }
 
-    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, URI uri) {
-        return new ApiClientBuilder<>(clazz, uri);
+    public static <T> ApiClientBuilder<T> newBuilder(Class<T> clazz, URI uri, ResteasyClient client) {
+        return new ApiClientBuilder<>(clazz, uri, client);
     }
 }

@@ -48,21 +48,27 @@ class ApiTest {
     @Value("${openfaas-java-sdk.admin.password}")
     private String password;
 
+    @BeforeAll
+    static void defineLocale() {
+        log.info("Locale atual {}", Locale.getDefault().toString());
+        Locale.setDefault(new Locale("en", "US"));
+    }
+
     private OpenfaasApi openfaasApi() {
-        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port));
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), null);
     }
 
     private OpenfaasApi openfaasApiWithCustomHeader() {
         Supplier<Map<String, String>> headerSupplier = () -> {
             Map<String, String> headers = new HashMap<>();
-            headers.put("Authorization:", "Bearer any_auth_token");
+            headers.put("Authorization", "Bearer any_auth_token");
             return headers;
         };
-        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), headerSupplier);
+        return OpenfaasApi.getInstance(String.format("http://localhost:%d", this.port), headerSupplier, null);
     }
 
     private OpenfaasAdminApi openfaasAdminApi() {
-        return OpenfaasAdminApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password);
+        return OpenfaasAdminApi.getInstance(URI.create(String.format("http://localhost:%d", this.port)), username, password, null);
     }
 
     @Test

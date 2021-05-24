@@ -1,5 +1,6 @@
 package dev.zodo.openfaas.i18n;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Locale;
 
+@Slf4j
 class BundlesTest {
+
+    @BeforeAll
+    static void defineLocale() {
+        log.info("Locale atual {}", Locale.getDefault().toString());
+        Locale.setDefault(new Locale("en", "US"));
+    }
 
     @ParameterizedTest
     @CsvSource(value = {"US;en;Provider does not support info endpoint", "BR;pt;Provedor não disponibiliza informações."}, delimiter = ';')

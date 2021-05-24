@@ -2,13 +2,11 @@
   License: GNU Lesser General Public License (LGPL), version 3 or later
   See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.zodo</groupId>
     <artifactId>openfaas-java-sdk</artifactId>
-    <version>1.0.0-beta.1</version>
+    <version>1.0.1-beta.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>Openfass Java SDKs</description>
@@ -17,6 +15,8 @@
         <!-- dependencies -->
         <lombok.version>1.18.6</lombok.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <commons-logging.version>1.0.0.Final</commons-logging.version>
+        <jackson.version>2.11.1</jackson.version>
         <springboot.version>2.2.5.RELEASE</springboot.version>
         <!-- Sonar -->
         <sonar.projectKey>zodo-dev:${project.artifactId}</sonar.projectKey>
@@ -37,10 +37,10 @@
 
     <scm>
         <url>https://github.com/zodo-dev/openfaas-java-sdk</url>
-        <connection>https://github.com/zodo-dev/openfaas-java-sdk.git</connection>
-        <developerConnection>https://github.com/zodo-dev/openfaas-java-sdk.git
+        <connection>scm:git:git@github.com:zodo-dev/openfaas-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:zodo-dev/openfaas-java-sdk.git
         </developerConnection>
-        <tag>1.0.0-beta.1</tag>
+        <tag>HEAD</tag>
     </scm>
     <licenses>
         <license>
@@ -65,6 +65,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -73,37 +74,48 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.aeonbits.owner</groupId>
-            <artifactId>owner</artifactId>
-            <version>1.0.12</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>4.5.6.Final</version>
+            <artifactId>resteasy-client-api</artifactId>
+            <version>4.5.8.Final</version>
             <exclusions>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
                 <exclusion>
                     <artifactId>jboss-logging</artifactId>
                     <groupId>org.jboss.logging</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>4.5.6.Final</version>
+            <version>4.5.8.Final</version>
             <exclusions>
-                <exclusion>
-                    <artifactId>jackson-databind</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                </exclusion>
                 <exclusion>
                     <artifactId>guava</artifactId>
                     <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -113,6 +125,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>4.5.8.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -132,6 +150,14 @@
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -258,6 +284,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+                <configuration>
+                    <properties>
+                        <user.language>en</user.language>
+                        <argLine>-Duser.language=${user.language}</argLine>
+                    </properties>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
